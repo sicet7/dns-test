@@ -72,7 +72,12 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	defer resp.Body.Close()
+	defer func(body io.ReadCloser) {
+		clsErr := body.Close()
+		if clsErr != nil {
+			log.Fatalln(clsErr)
+		}
+	}(resp.Body)
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
